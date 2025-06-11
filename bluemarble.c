@@ -1,16 +1,3 @@
-과제 중간점검
-박성수
-•
-어제
-10점
-화일명 :  학번_이름.c
-수업 댓글
-내 과제
-제출 완료됨
-1423_장현중.c
-C
-비공개 댓글
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
