@@ -37,13 +37,13 @@ short cur = 0;
 
 void endl()
 {
-    SetConsoleCursorPosition(stdHandle, { 145, cur });
+    SetConsoleCursorPosition(stdHandle, (COORD){ 145, cur });
     cur++;
 }
 
 void pan()
 {
-    SetConsoleCursorPosition(stdHandle, {0,0});
+    SetConsoleCursorPosition(stdHandle, (COORD){0,0});
     printf("+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+------------+\n");
     printf("|            |            |            |            |            |            |            |            |            |            |            |\n");
     printf("|            |            |            |            |            |            |            |            |            |            |            |\n");
@@ -249,20 +249,22 @@ struct dicetype
     int dice1, dice2;
 };
 
-dicetype dice()
+struct dicetype dice()
 {
-    int a = rand() % 6 + 1;
-    int b = rand() % 6 + 1;
-    return { a, b };
+    struct dicetype result;
+    result.dice1 = rand() % 6 + 1;
+    result.dice2 = rand() % 6 + 1;
+    return result;
 }
+
 
 struct land_type
 {
     int idx, having, hotel, building, house;
 };
 
-land_type state[40];
-player p_info[5];
+struct land_type state[40];
+struct player p_info[5];
 
 
 void golden_key_init()
@@ -543,7 +545,7 @@ void golden_key(int player)
 }
 
 
-land_info basic_land[50] =
+struct land_info basic_land[50] =
 {
     {"타이베이", 50000, 250000,150000, 50000, 2000, 250000,90000, 10000,30000},
     {"베이징", 80000, 250000,150000, 50000, 4000, 450000,180000, 20000,60000},
@@ -696,7 +698,7 @@ void move_printing(int meter, int player_info)
 void p1_turn()
 {
     cur = 0;
-    dicetype d = dice();
+    struct dicetype d = dice();
     gotoxy(145, 0);
     ClearConsoleRect(stdHandle, 145, 0, 245, 100);
     endl();
@@ -743,7 +745,7 @@ void p2_turn()
     cur = 0;
     ClearConsoleRect(stdHandle, 145, 0, 245, 100);
     gotoxy(145, 0);
-    dicetype d = dice();
+    struct dicetype d = dice();
     endl();
     printf("p2 당신의 차례입니다!");
     endl();
@@ -760,8 +762,8 @@ void p2_turn()
         {
             printf("더블 3번! 무인도 이동");
             endl();
-            FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, { 0, 145 }, &dw);
-            SetConsoleCursorPosition(stdHandle, { 0, 145 });
+            FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, (COORD){ 0, 145 }, &dw);
+            SetConsoleCursorPosition(stdHandle, (COORD){ 0, 145 });
             p_info[2].location = 11;
         }
         else
@@ -770,8 +772,8 @@ void p2_turn()
             endl();
             move_printing(d.dice1 + d.dice2, 2);
             p_info[2].double_count++;
-            FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, { 0, 145 }, &dw);
-            SetConsoleCursorPosition(stdHandle, { 0, 145 });
+            FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, (COORD){ 0, 145 }, &dw);
+            SetConsoleCursorPosition(stdHandle, (COORD){ 0, 145 });
             p2_turn();
         }
     }
@@ -780,9 +782,9 @@ void p2_turn()
         p_info[2].double_count = 0;
         move_printing(d.dice1 + d.dice2, 2);
     }
-    SetConsoleCursorPosition(stdHandle, { 0, 145 });
-    FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, { 0, 145 }, &dw);
-    SetConsoleCursorPosition(stdHandle, { 0, 145 });
+    SetConsoleCursorPosition(stdHandle, (COORD){ 0, 145 });
+    FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, (COORD){ 0, 145 }, &dw);
+    SetConsoleCursorPosition(stdHandle, (COORD){ 0, 145 });
 }
 
 void onep()
@@ -808,8 +810,8 @@ void game()
     scanf("%d", &playstyle);
     if(playstyle == 1)
     {
-        SetConsoleCursorPosition(stdHandle, { 0, 0 });
-        FillConsoleOutputCharacter(stdHandle, ' ', 50 * 50, { 0, 0 }, &dw);
+        SetConsoleCursorPosition(stdHandle, (COORD){ 0, 0 });
+        FillConsoleOutputCharacter(stdHandle, ' ', 50 * 50, (COORD){ 0, 0 }, &dw);
         getchar();
         onep();
     }
@@ -827,7 +829,7 @@ void start_page()
 {
     p_info[1].asset = 3430000;
     p_info[2].asset = 3430000;
-    setColor(LightBlue);
+    setColor(LightBlueGreen);
     printf("****************************************************************\n");
     printf(" _____ __    _____ _____    _____ _____ _____ _____ __    _____ \n");
     printf("| __  |  |  |  |  |   __|  |     |  _  | __  | __  |  |  |   __|\n");
