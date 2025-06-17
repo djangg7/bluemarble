@@ -51,16 +51,18 @@ const int BOARD_SIZE = 40;
 int golden_key_number[105];
 int* screen;
 int next;
-
+int sahwei = 0;
 /// ⬛ = p1, ⚫ = p2;
 
 typedef BOOL (WINAPI* pSCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 typedef BOOL (WINAPI* pGCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 short cur = 0;
 
+
 struct land_info
 {
     char a[105];
+    char b[105];
     int buy_price;
     int hotel_price;
     int building_price;
@@ -72,10 +74,75 @@ struct land_info
     int two_house_landing_price;
 };
 
+struct land_info basic_land[50] =
+{
+    {"타이베이", "TP", 50000, 250000,150000, 50000, 2000, 250000,90000, 10000,30000},
+    {"베이징","BJ", 80000, 250000,150000, 50000, 4000, 450000,180000, 20000,60000},
+    {"마닐라", "MN" , 80000, 250000,150000, 50000, 4000, 450000,180000, 20000,60000},
+    {"제주도", "JJ",200000,-1,-1,-1,300000,-1,-1,-1,-1},
+    {"싱가포르", "SP" , 100000, 250000,150000, 50000, 6000, 550000,270000, 30000,90000},
+    {"카이로", "CR" ,100000, 250000,150000, 50000, 6000, 550000,270000, 30000,90000},
+    {"이스탄불", "IS" , 120000, 250000,150000, 50000, 8000, 600000,300000, 40000,100000},
+    {"아테네", "AT" ,140000, 500000,300000, 100000, 10000, 750000,450000, 50000,150000},
+    {"코펜하겐", "CP" , 160000,500000,300000,100000,10000,750000,450000,50000,150000},
+    {"스톡홀롬", "ST" , 160000, 500000,300000, 100000, 12000, 900000,500000, 60000,180000},
+    {"콩코드 여객기","CO" ,200000,-1,-1,-1,300000,-1,-1,-1,-1},
+    {"베른", "BR" , 180000, 500000,300000, 100000, 14000, 950000,550000, 70000,200000},
+    {"베를린", "BL" ,180000, 500000,300000, 100000, 14000, 950000,550000, 70000,200000},
+    {"오타와", "OT" ,200000, 500000,300000, 100000, 16000, 1000000,600000, 80000,220000},
+    {"부에노스 아이레스","BA" , 220000, 750000,400000, 150000, 18000, 1050000,700000, 90000,250000},
+    {"상파울루", "SA" ,240000, 750000,450000, 150000, 20000, 1100000,750000, 100000,300000},
+    {"시드니", "SY" ,240000, 750000,450000, 150000, 20000, 1100000,750000, 100000,300000},
+    {"부산", "BS" ,500000, -1, -1, -1, 600000, -1, -1, -1, -1},
+    {"하와이", "HW" , 260000, 750000,450000, 150000, 22000, 1150000,800000, 110000,330000},
+    {"리스본","LB" ,260000, 750000,450000, 150000, 22000, 1150000,800000, 110000,330000},
+    {"퀸 엘리자베스 호", "QE" ,300000,-1,-1,-1,250000,-1,-1,-1,-1},
+    {"마드리드", "MD" , 280000, 750000,450000, 150000, 24000, 1200000,850000, 120000,360000},
+    {"도쿄", "TK" , 300000, 1000000,600000, 200000, 26000, 1270000,900000, 130000,390000},
+    {"컬럼비아 호", "CL" , 450000,-1,-1,-1, 300000,-1,-1,-1,-1},
+    {"파리", "PR" , 320000, 1000000,600000, 200000, 28000, 1400000,1000000, 150000,450000},
+    {"로마", "RM" ,320000, 1000000,600000, 200000, 28000, 1400000,1000000, 150000,450000},
+    {"런던", "LD" ,350000, 1000000,600000, 200000, 35000, 1500000,1100000, 170000,500000},
+    {"뉴욕", "NY" ,350000, 1000000,600000, 200000, 35000, 1500000,1100000, 170000,500000},
+    {"서울", "SL" ,1000000,-1,-1,-1, 2000000,-1,-1,-1,-1}
+};
+
+struct box_coord{
+    int x, y;
+};
+
+struct dicetype
+{
+    int dice1, dice2;
+};
+
+struct dicetype dice()
+{
+    struct dicetype result;
+    result.dice1 = rand() % 6 + 1;
+    result.dice2 = rand() % 6 + 1;
+    return result;
+}
+
+struct land_type
+{
+    int idx, having, hotel, building, house, own;
+};
+
+struct box_coord CRD[] = {
+    {0,0},{2,1}, {7,1}, {12,1}, {17,1}, {22,1}, {27,1}, {32,1}, {37,1},
+    {42,1}, {47,1}, {52,1}, {52,3}, {52,5}, {52,7}, {52,9}, {52,11},
+    {52,13}, {52,15}, {52,17}, {52,19}, {52,21}, {47,21}, {42,21}, {37,21},
+    {32,21}, {27,21}, {22,21}, {17,21}, {12,21}, {7,21}, {2,21}, {2,19},
+    {2,17}, {2,15}, {2,13}, {2,11}, {2,9}, {2,7}, {2,5}, {2,3}
+};
+
 struct player
 {
     int double_count, asset, location, muindo, udae, hotel_cnt, building_cnt, house_cnt;
 };
+struct land_type state[40];
+struct player p_info[5];
 
 void ClearConsoleRect(HANDLE hConsole, SHORT left, SHORT top, SHORT right, SHORT bottom)
 {
@@ -127,6 +194,110 @@ void pan()
     printf(BOLDBLUE "+----+" BOLDYELLOW "----" BOLDCYAN "+----+" BOLDYELLOW "----+----" BOLDCYAN "+----+" BOLDYELLOW "----+----" YELLOW "+----+" BOLDYELLOW "----" BOLDBLUE "+----+\n");
     printf(BOLDBLUE "|" WHITE" SP " BOLDBLUE"|" WHITE " MD | QE | LB | HW | BS | SY | SA | GK | BA " BOLDBLUE "|" WHITE" GT " BOLDBLUE"|\n");
     printf(BOLDBLUE "+----+" WHITE "----+----+----+----+----+----+----+----+----" BOLDBLUE "+----+\n");
+}
+
+void gotoxy(SHORT x, SHORT y)
+{
+    COORD pos = { x, y };
+    SetConsoleCursorPosition(stdHandle, pos);
+}
+
+void color(int loc, int c){
+    gotoxy(CRD[loc].x, CRD[loc].y);
+    switch (loc)
+    {
+    case 1:
+        if(c == 1){
+            printf(WHITE"GO");
+        }
+        else if(c == 2){
+            printf(RED"GO");
+        }
+        else{
+            printf(BLUE"GO");
+        }
+        break;
+
+    case 3:
+    case 8:
+    case 13:
+    case 18:
+    case 23:
+    case 36:
+        if(c == 1){
+            printf(WHITE"GK");
+        }
+        else if(c == 2){
+            printf(RED"GK");
+        }
+        else{
+            printf(BLUE"GK");
+        }
+        break;
+
+    case 11:
+
+        if(c == 1){
+            printf(WHITE"JA");
+        }
+        else if(c == 2){
+            printf(RED"JA");
+        }
+        else{
+            printf(BLUE"JA");
+        }
+        break;
+
+    case 39:
+        if(c == 1){
+            printf(WHITE"TX");
+        }
+        else if(c == 2){
+            printf(RED"TX");
+        }
+        else{
+            printf(BLUE"TX");
+        }
+        break;
+
+    case 21:
+        if(c == 1){
+            printf(WHITE"GT");
+        }
+        else if(c == 2){
+            printf(RED"GT");
+        }
+        else{
+            printf(BLUE"GT");
+        }
+        break;
+
+    case 31:
+        if(c == 1){
+            printf(WHITE"SP");
+        }
+        else if(c == 2){
+            printf(RED"SP");
+        }
+        else{
+            printf(BLUE"SP");
+        }
+        break;
+
+    default:
+        if(c == 1){
+            printf(WHITE"%s", basic_land[state[loc].idx].b);
+        }
+        else if(c == 2){
+            printf(RED"%s", basic_land[state[loc].idx].b);
+        }
+        else{
+            printf(BLUE"%s", basic_land[state[loc].idx].b);
+        }
+
+        break;
+    }
+    printf(WHITE);
 }
 
 static int* fullscreen(int minWidth, int minHeight) {
@@ -217,67 +388,6 @@ Exit:
     screen[0] = -1;
     screen[1] = -1;
     return screen;
-}
-
-struct dicetype
-{
-    int dice1, dice2;
-};
-
-struct dicetype dice()
-{
-    struct dicetype result;
-    result.dice1 = rand() % 6 + 1;
-    result.dice2 = rand() % 6 + 1;
-    return result;
-}
-
-
-struct land_type
-{
-    int idx, having, hotel, building, house;
-};
-
-struct land_type state[40];
-struct player p_info[5];
-
-struct land_info basic_land[50] =
-{
-    {"타이베이", 50000, 250000,150000, 50000, 2000, 250000,90000, 10000,30000},
-    {"베이징", 80000, 250000,150000, 50000, 4000, 450000,180000, 20000,60000},
-    {"마닐라", 80000, 250000,150000, 50000, 4000, 450000,180000, 20000,60000},
-    {"제주도",200000,-1,-1,-1,300000,-1,-1,-1,-1},
-    {"싱가포르", 100000, 250000,150000, 50000, 6000, 550000,270000, 30000,90000},
-    {"카이로", 100000, 250000,150000, 50000, 6000, 550000,270000, 30000,90000},
-    {"이스탄불", 120000, 250000,150000, 50000, 8000, 600000,300000, 40000,100000},
-    {"아테네", 140000, 500000,300000, 100000, 10000, 750000,450000, 50000,150000},
-    {"코펜하겐", 160000,500000,300000,100000,10000,750000,450000,50000,150000},
-    {"콩코드 여객기",200000,-1,-1,-1,300000,-1,-1,-1,-1},
-    {"스톡홀롬", 160000, 500000,300000, 100000, 12000, 900000,500000, 60000,180000},
-    {"베른", 180000, 500000,300000, 100000, 14000, 950000,550000, 70000,200000},
-    {"베를린", 180000, 500000,300000, 100000, 14000, 950000,550000, 70000,200000},
-    {"오타와", 200000, 500000,300000, 100000, 16000, 1000000,600000, 80000,220000},
-    {"부에노스 아이레스", 220000, 750000,400000, 150000, 18000, 1050000,700000, 90000,250000},
-    {"상파울루", 240000, 750000,450000, 150000, 20000, 1100000,750000, 100000,300000},
-    {"시드니", 240000, 750000,450000, 150000, 20000, 1100000,750000, 100000,300000},
-    {"부산", 500000, -1, -1, -1, 600000, -1, -1, -1, -1},
-    {"하와이", 260000, 750000,450000, 150000, 22000, 1150000,800000, 110000,330000},
-    {"리스본", 260000, 750000,450000, 150000, 22000, 1150000,800000, 110000,330000},
-    {"퀸 엘리자베스 호",300000,-1,-1,-1,250000,-1,-1,-1,-1},
-    {"마드리드", 280000, 750000,450000, 150000, 24000, 1200000,850000, 120000,360000},
-    {"도쿄", 300000, 1000000,600000, 200000, 26000, 1270000,900000, 130000,390000},
-    {"컬럼비아 호", 450000,-1,-1,-1, 300000,-1,-1,-1,-1},
-    {"파리", 320000, 1000000,600000, 200000, 28000, 1400000,1000000, 150000,450000},
-    {"로마", 320000, 1000000,600000, 200000, 28000, 1400000,1000000, 150000,450000},
-    {"런던", 350000, 1000000,600000, 200000, 35000, 1500000,1100000, 170000,500000},
-    {"뉴욕", 350000, 1000000,600000, 200000, 35000, 1500000,1100000, 170000,500000},
-    {"서울", 1000000,-1,-1,-1, 2000000,-1,-1,-1,-1}
-};
-
-void gotoxy(SHORT x, SHORT y)
-{
-    COORD pos = { x, y };
-    SetConsoleCursorPosition(stdHandle, pos);
 }
 
 void golden_key_init()
@@ -435,7 +545,9 @@ void golden_key(int player)
         endl();
         printf("무인도로 곧장 가시되, 출발지를 지날 때도 월급을 받지 못합니다.");
         endl();
+        color(p_info[player].location, 1);
         p_info[player].location = 11;
+        color(p_info[player].location, player + 1);
         break;
 
     case 5:
@@ -468,7 +580,10 @@ void golden_key(int player)
             endl();
             p_info[player].asset += 200000;
         }
+
+        color(p_info[player].location, 1);
         p_info[player].location = 6;
+        color(p_info[player].location, player + 1);
         break;
 
     case 7:
@@ -645,12 +760,12 @@ void golden_key(int player)
     }
 }
 
-int non_default_land[] = {1, 3, 8, 11, 13, 18, 23, 31, 36, 39};
+int non_default_land[] = {1, 3, 8, 11, 13, 18, 21, 23, 31, 36, 39};
 
 void board_init(){
     int cnt = 0;
     for(int i = 1; i <= BOARD_SIZE; i++){
-        for(int j = 0; j <= 9; j++){
+        for(int j = 0; j <= 10; j++){
             if(i == non_default_land[j]){
                 i++, j = 0;
                 continue;
@@ -664,8 +779,11 @@ void board_init(){
 void board_event(int player)
 {
     int loc = p_info[player].location;
+    endl();
     switch (loc)
     {
+    case 1:
+        printf("시작지에 도착했습니다!");
     case 3:
     case 8:
     case 13:
@@ -685,12 +803,18 @@ void board_event(int player)
         break;
 
     case 39:
-        printf("사회복지기금 접수처입니다. 10만원 기부!");
+        printf("사회복지기금 기부처입니다. 10만원 기부!");
         Sleep(2000);
         endl();
         p_info[player].asset -= 100000;
         break;
+    case 21:
+        printf("사회복지기금 접수처입니다. 현재까지 모인 기금을 받아갑니다.");
+        endl();
+        Sleep(2000);
+        p_info[player].asset += sahwei;
 
+        break;
     case 31:
         printf("우주여행 칸입니다! 아무 타일로 이동할 수 있습니다.");
         endl();
@@ -709,7 +833,7 @@ void board_event(int player)
         printf("도시에 도착했습니다. 소유 상태 확인 중...");
 
 
-        if (state[loc].idx >= 0)
+        if (state[loc].own == 0)
         {
             endl();
             printf("구매 가능한 땅입니다.");
@@ -743,7 +867,7 @@ void board_event(int player)
                     Sleep(1000);
 
                     p_info[player].asset -= basic_land[state[loc].idx].buy_price;
-                    state[loc].idx = -player;
+                    state[loc].own = player;
 
 
                     gotoxy(0, 24);
@@ -751,13 +875,14 @@ void board_event(int player)
                 }
             }
         }
-        else if (state[loc].idx != -player)
+        else if (state[loc].own != player)
         {
             endl();
             printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
             int toll = 50000; // 통행료
             p_info[player].asset -= toll;
-            p_info[state[loc].idx].asset += toll;
+            p_info[-state[loc].idx].asset += toll;
+            Sleep(1000);
         }
         else
         {
@@ -766,6 +891,7 @@ void board_event(int player)
             endl();
             printf("무엇을 하시겠습니까?");
             endl();
+            Sleep(1000);
         }
             break;
     }
@@ -782,14 +908,15 @@ void moveto(int meter, int player_info)
         p_info[player_info].asset += 200000;
         p_info[player_info].location -= 40;
     }
+    color(p_info[player_info].location, player_info + 1);
     board_event(player_info);
 }
 
 void move_printing(int meter, int player_info)
 {
     printf("%d칸 이동",meter);
+    color(p_info[player_info].location, 1);
     endl();
-
     endl();
     Sleep(1000);
     moveto(meter, player_info);
@@ -916,8 +1043,6 @@ void start_page()
         return;
     }
 }
-
-
 
 int main()
 {
