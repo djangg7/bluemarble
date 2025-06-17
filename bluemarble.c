@@ -24,11 +24,25 @@ int ide = 2;
 int ide = 0;
 #endif
 
-enum {
-    Black = 0,
-    Blue, Green, BlueGreen, Red, Purple, Yellow, White, Gray,
-    LightBlue, LightGreen, LightBlueGreen, LightRed, LightPurple, LightYellow, LightWhite
-};
+
+/// COLORS DEFINING
+#define RESET   "\033[0m"
+#define BLACK   "\033[0m\033[30m"      /* Black */
+#define RED     "\033[0m\033[31m"      /* Red */
+#define GREEN   "\033[0m\033[32m"      /* Green */
+#define YELLOW  "\033[0m\033[33m"      /* Yellow */
+#define BLUE    "\033[0m\033[34m"      /* Blue */
+#define MAGENTA "\033[0m\033[35m"      /* Magenta */
+#define CYAN    "\033[0m\033[36m"      /* Cyan */
+#define WHITE   "\033[0m\033[37m"      /* White */
+#define BOLDBLACK   "\033[1m\033[30m"      /* Bold Black */
+#define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
+#define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
+#define BOLDYELLOW  "\033[1m\033[33m"      /* Bold Yellow */
+#define BOLDBLUE    "\033[1m\033[34m"      /* Bold Blue */
+#define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
+#define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
+#define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
 unsigned long dw;
 int comment_start = 57;
@@ -79,11 +93,6 @@ void ClearConsoleRect(HANDLE hConsole, SHORT left, SHORT top, SHORT right, SHORT
     }
 }
 
-void setColor(int col)
-{
-    SetConsoleTextAttribute(stdHandle, col);
-}
-
 void endl()
 {
     SetConsoleCursorPosition(stdHandle, (COORD){ comment_start, cur });
@@ -93,31 +102,31 @@ void endl()
 void pan()
 {
     SetConsoleCursorPosition(stdHandle, (COORD){0,0});
-    setColor(Green);
 
-    printf("+----+----+----+----+----+----+----+----+----+----+----+\n");
-    printf("| GO | TP | GK | BJ | MN | JJ | SP | GK | CR | IS | JA |\n");
-    printf("+----+----+----+----+----+----+----+----+----+----+----+\n");
-    printf("| SL |                                            | AT |\n");
-    printf("+----+                                            +----+\n");
-    printf("| TX |                                            | GK |\n");
-    printf("+----+                                            +----+\n");
-    printf("| NY |                                            | CP |\n");
-    printf("+----+                                            +----+\n");
-    printf("| LD |                                            | ST |\n");
-    printf("+----+                                            +----+\n");
-    printf("| GK |                                            | CO |\n");
-    printf("+----+                                            +----+\n");
-    printf("| RM |                                            | BR |\n");
-    printf("+----+                                            +----+\n");
-    printf("| PR |                                            | GK |\n");
-    printf("+----+                                            +----+\n");
-    printf("| COL|                                            | BL |\n");
-    printf("+----+                                            +----+\n");
-    printf("| TK |                                            | OT |\n");
-    printf("+----+----+----+----+----+----+----+----+----+----+----+\n");
-    printf("| SP | MD | QE | LB | HW | BS | SY | SA | GK | BA | GT |\n");
-    printf("+----+----+----+----+----+----+----+----+----+----+----+\n");
+    printf(WHITE);
+    printf(BOLDBLUE "+----+" WHITE "----+----+----+----+----+----+----+----+----" BOLDBLUE "+----+\n");
+    printf(BOLDBLUE "|" WHITE " GO " BOLDBLUE"|" WHITE " TP | GK | BJ | MN | JJ | SP | GK | CR | IS " BOLDBLUE "|" WHITE" JA " BOLDBLUE"|\n");
+    printf(BOLDBLUE "+----+" BOLDRED "----" YELLOW "+----+" BOLDRED "----+----" BOLDCYAN "+----+" BOLDRED "----" YELLOW "+----+" BOLDRED "----+----" BOLDBLUE "+----+\n");
+    printf(WHITE "| SL " BOLDCYAN "|" WHITE "                                            " GREEN "|" WHITE " AT |\n");
+    printf(WHITE "+----" BOLDWHITE "+" WHITE "                                            " YELLOW "+" WHITE "----+\n");
+    printf(WHITE "| TX " BOLDWHITE "|" WHITE "                                            " YELLOW "|" WHITE " GK |\n");
+    printf(WHITE "+----" BOLDWHITE "+" WHITE "                                            " YELLOW "+" WHITE "----+\n");
+    printf(WHITE "| NY " BOLDBLACK "|" WHITE "                                            " GREEN "|" WHITE " CP |\n");
+    printf(WHITE "+----" BOLDBLACK "+" WHITE "                                            " GREEN "+" WHITE "----+\n");
+    printf(WHITE "| LD " BOLDBLACK "|" WHITE "                                            " GREEN "|" WHITE " ST |\n");
+    printf(WHITE "+----" YELLOW "+" WHITE "                                            " BOLDCYAN "+" WHITE "----+\n");
+    printf(WHITE "| GK " YELLOW "|" WHITE "                                            " BOLDCYAN "|" WHITE " CO |\n");
+    printf(WHITE "+----" YELLOW "+" WHITE "                                            " BOLDCYAN "+" WHITE "----+\n");
+    printf(WHITE "| RM " BOLDBLACK "|" WHITE "                                            " GREEN "|" WHITE " BR |\n");
+    printf(WHITE "+----" BOLDBLACK "+" WHITE "                                            " YELLOW "+" WHITE "----+\n");
+    printf(WHITE "| PR " BOLDBLACK "|" WHITE "                                            " YELLOW "|" WHITE " GK |\n");
+    printf(WHITE "+----" BOLDCYAN "+" WHITE "                                            " YELLOW "+" WHITE "----+\n");
+    printf(WHITE "| CL " BOLDCYAN "|" WHITE "                                            " GREEN "|" WHITE " BL |\n");
+    printf(WHITE "+----" BOLDCYAN "+" WHITE "                                            " GREEN "+" WHITE "----+\n");
+    printf(WHITE "| TK " BOLDBLACK "|" WHITE "                                            " GREEN "|" WHITE " OT |\n");
+    printf(BOLDBLUE "+----+" BOLDYELLOW "----" BOLDCYAN "+----+" BOLDYELLOW "----+----" BOLDCYAN "+----+" BOLDYELLOW "----+----" YELLOW "+----+" BOLDYELLOW "----" BOLDBLUE "+----+\n");
+    printf(BOLDBLUE "|" WHITE" SP " BOLDBLUE"|" WHITE " MD | QE | LB | HW | BS | SY | SA | GK | BA " BOLDBLUE "|" WHITE" GT " BOLDBLUE"|\n");
+    printf(BOLDBLUE "+----+" WHITE "----+----+----+----+----+----+----+----+----" BOLDBLUE "+----+\n");
 }
 
 static int* fullscreen(int minWidth, int minHeight) {
@@ -636,10 +645,25 @@ void golden_key(int player)
     }
 }
 
+int non_default_land[] = {1, 3, 8, 11, 13, 18, 23, 31, 36, 39};
+
+void board_init(){
+    int cnt = 0;
+    for(int i = 1; i <= BOARD_SIZE; i++){
+        for(int j = 0; j <= 9; j++){
+            if(i == non_default_land[j]){
+                i++, j = 0;
+                continue;
+            }
+        }
+        state[i].idx = cnt;
+        cnt++;
+    }
+}
+
 void board_event(int player)
 {
     int loc = p_info[player].location;
-
     switch (loc)
     {
     case 3:
@@ -685,10 +709,18 @@ void board_event(int player)
         printf("도시에 도착했습니다. 소유 상태 확인 중...");
 
 
-        if (state[loc].idx == 0)
+        if (state[loc].idx >= 0)
         {
             endl();
-            printf("구매 가능한 땅입니다. 구입하시겠습니까? (y/n)");
+            printf("구매 가능한 땅입니다.");
+            endl();
+            printf("======도시 정보======");
+            endl();
+            printf(" 도시 이름 : %s", basic_land[state[loc].idx].a);
+            endl();
+            printf(" 도시 가격 : %d", basic_land[state[loc].idx].buy_price);
+            endl();
+            printf("구입하시겠습니까? (y/n)");
             endl();
             printf(" > ");
 
@@ -701,6 +733,7 @@ void board_event(int player)
                 {
                     endl();
                     printf("돈이 부족합니다.");
+                    endl();
                 }
                 else
                 {
@@ -709,15 +742,16 @@ void board_event(int player)
                     endl();
                     Sleep(1000);
 
-                    state[loc].idx = player;
                     p_info[player].asset -= basic_land[state[loc].idx].buy_price;
+                    state[loc].idx = -player;
+
 
                     gotoxy(0, 24);
                     printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
                 }
             }
         }
-        else if (state[loc].idx != player)
+        else if (state[loc].idx != -player)
         {
             endl();
             printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
@@ -733,7 +767,7 @@ void board_event(int player)
             printf("무엇을 하시겠습니까?");
             endl();
         }
-        break;
+            break;
     }
     ClearConsoleRect(stdHandle, comment_start, 0, screen[0] - 1, 100);
 }
@@ -814,8 +848,11 @@ void onep()
 {
     pan();
     golden_key_init();
+    p_info[1].location = 1;
+    p_info[2].location = 1;
     while(1)
     {
+        printf(WHITE);
         gotoxy(0, 24);
         printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
         player_turn(1);
@@ -835,6 +872,7 @@ void game()
     scanf("%d", &playstyle);
     if(playstyle == 1)
     {
+        board_init();
         SetConsoleCursorPosition(stdHandle, (COORD){ 0, 0 });
         FillConsoleOutputCharacter(stdHandle, ' ', 50 * 50, (COORD){ 0, 0 }, &dw);
         getchar();
@@ -854,14 +892,14 @@ void start_page()
 {
     p_info[1].asset = 3430000;
     p_info[2].asset = 3430000;
-    setColor(LightBlueGreen);
+    printf(BOLDCYAN);
     printf("****************************************************************\n");
     printf(" _____ __    _____ _____    _____ _____ _____ _____ __    _____ \n");
     printf("| __  |  |  |  |  |   __|  |     |  _  | __  | __  |  |  |   __|\n");
     printf("| __ -|  |__|  |  |   __|  | | | |     |    -| __ -|  |__|   __|\n");
     printf("|_____|_____|_____|_____|  |_|_|_|__|__|__|__|_____|_____|_____|\n\n");
     printf("****************************************************************\n");
-    setColor(White);
+    printf(WHITE);
     printf("\n");
     printf("Welcome to BLUEMARBLE!\nBLUEMARBLE is a simple online game based on monopoly, you can play a game with one computer or you can play it with two computer.\n\nTo start a game press 1. To exit a game press 2\n");
     printf("start the game : 1\nend the game : 2\n> ");
