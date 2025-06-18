@@ -303,6 +303,39 @@ void color(int loc, int c){
     printf(WHITE);
     endl();
 }
+void colorbg(int loc, int c){
+    gotoxy(CRD[loc].x, CRD[loc].y);
+    switch (loc)
+    {
+    case 1:
+    case 3:
+    case 8:
+    case 13:
+    case 18:
+    case 23:
+    case 36:
+    case 11:
+    case 39:
+    case 21:
+    case 31:
+        break;
+
+    default:
+        if(c == 1){
+            printf(WHITE"%s", basic_land[state[loc].idx].b);
+        }
+        else if(c == 2){
+            printf(REDB"%s", basic_land[state[loc].idx].b);
+        }
+        else{
+            printf(BLUEB"%s", basic_land[state[loc].idx].b);
+        }
+
+        break;
+    }
+    printf(WHITE);
+    endl();
+}
 
 static int* fullscreen(int minWidth, int minHeight) {
 
@@ -902,9 +935,7 @@ void board_event(int player)
 
                         p_info[player].asset -= basic_land[state[loc].idx].buy_price;
                         state[loc].own = player;
-
-                        gotoxy(0, 24);
-                        printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+                        colorbg(p_info[player].location, player + 1);
                     }
                 }
             }
@@ -918,8 +949,8 @@ void board_event(int player)
             endl();
             printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
             int toll = basic_land[state[loc].idx].landing_price; // 통행료
-            p_info[player].asset -= toll;
-            p_info[state[loc].idx].asset += toll;
+            p_info[player].asset -=  toll;
+            p_info[state[loc].own].asset += toll;
             Sleep(1000);
         }
         else
@@ -1044,10 +1075,6 @@ void player_turn(int player)
             printf("더블! ");
             endl();
             move_printing(d.dice1 + d.dice2, player);
-            if(flag){
-                printf("%d님 패배!", flag);
-                return;
-            }
             player_turn(player);
         }
     }
