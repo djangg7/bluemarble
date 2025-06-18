@@ -60,7 +60,7 @@ int sahwei = 0;
 typedef BOOL (WINAPI* pSCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 typedef BOOL (WINAPI* pGCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 short cur = 0;
-
+void board_event(int player);
 
 struct land_info
 {
@@ -588,6 +588,7 @@ void golden_key(int player)
         color(p_info[player].location, 1);
         p_info[player].location = 6;
         color(p_info[player].location, player + 1);
+        board_event(player);
         break;
 
     case 7:
@@ -625,7 +626,9 @@ void golden_key(int player)
         endl();
         printf("뒤로 세 칸 옮기시오");
         endl();
+        color(p_info[player].location,1);
         p_info[player].location -= 3;
+        color(p_info[player].location,player+1);
         if(p_info[player].location <= 0) p_info[player].location += 40;
         if(p_info[player].location == 1)
         {
@@ -685,7 +688,14 @@ void golden_key(int player)
             endl();
             p_info[player].asset += 200000;
         }
-        p_info[player].location = 16;
+        if(state[16].own != player){
+            printf("콩코드 여객기에 객실료 지불!");
+            endl();
+            p_info[player].asset -= basic_land[16].landing_price;
+        }
+        color(p_info[player].location, 1);
+        p_info[player].location = 2;
+        color(p_info[player].location, player + 1);
         break;
 
     case 15:
@@ -832,7 +842,9 @@ void board_event(int player)
         endl();
         scanf("%d", &target);
         endl();
+        color(p_info[player].location, 1);
         p_info[player].location = target;
+        color(p_info[player].location, player + 1);
         board_event(player);
         break;
 
@@ -905,9 +917,9 @@ void board_event(int player)
         {
             endl();
             printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
-            int toll = 50000; // 통행료
+            int toll = basic_land[state[loc].idx].landing_price; // 통행료
             p_info[player].asset -= toll;
-            p_info[-state[loc].idx].asset += toll;
+            p_info[state[loc].idx].asset += toll;
             Sleep(1000);
         }
         else
@@ -1023,7 +1035,9 @@ void player_turn(int player)
         {
             printf("더블 3번! 무인도 이동");
             endl();
+            color(p_info[player].location, 1);
             p_info[player].location = 11;
+            color(p_info[player].location, player+1);
         }
         else
         {
@@ -1134,7 +1148,7 @@ int main()
 {
     srand(time(NULL));
 
-    system("chcp 65001 > nul");
+	SetConsoleOutputCP(CP_UTF8);
 
     CONSOLE_CURSOR_INFO cursorInfo = { 0, };
 
