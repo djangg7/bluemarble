@@ -43,6 +43,9 @@ int ide = 0;
 #define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
+#define REDB    "\033[0m\033[41m"
+#define BLUEB    "\033[0m\033[44m"
+
 
 unsigned long dw;
 int comment_start = 57;
@@ -298,6 +301,7 @@ void color(int loc, int c){
         break;
     }
     printf(WHITE);
+    endl();
 }
 
 static int* fullscreen(int minWidth, int minHeight) {
@@ -636,7 +640,9 @@ void golden_key(int player)
         endl();
         printf("출발지까지 곧바로 가시오");
         endl();
+        color(p_info[player].location, 1);
         p_info[player].location = 1;
+        color(p_info[player].location, player + 1);
         printf("출발지 경유 월급 20만원");
         endl();
         p_info[player].asset += 200000;
@@ -776,14 +782,16 @@ void board_init(){
     }
 }
 
+int flag = 0;
+
 void board_event(int player)
 {
     int loc = p_info[player].location;
-    endl();
     switch (loc)
     {
     case 1:
         printf("시작지에 도착했습니다!");
+        break;
     case 3:
     case 8:
     case 13:
@@ -844,35 +852,53 @@ void board_event(int player)
             endl();
             printf(" 도시 가격 : %d", basic_land[state[loc].idx].buy_price);
             endl();
-            printf("구입하시겠습니까? (y/n)");
+            printf("무엇을 하시겠습니까?");
+            endl();
+            printf("1. 구매");
+            endl();
+            printf("2. 구매포기");
+            endl();
+            printf("3. 기권");
             endl();
             printf(" > ");
-
-            char buy;
-            scanf("%c", &buy);
+            int command;
+            scanf("%d", &command);
             getchar();
-            if (buy == 'y')
-            {
-                if(p_info[player].asset < basic_land[state[loc].idx].buy_price)
+            endl();
+            if(command == 1){
+                printf("정말 구매하시겠습니까? (y/n)");
+                endl();
+                printf(" > ");
+                char buy;
+                scanf("%c", &buy);
+                getchar();
+                if (buy == 'y')
                 {
-                    endl();
-                    printf("돈이 부족합니다.");
-                    endl();
+                    if(p_info[player].asset < basic_land[state[loc].idx].buy_price)
+                    {
+                        endl();
+                        printf("돈이 부족합니다.");
+                        Sleep(1000);
+                        endl();
+                    }
+                    else
+                    {
+                        endl();
+                        printf("구입 완료!");
+                        Sleep(1000);
+                        endl();
+
+                        p_info[player].asset -= basic_land[state[loc].idx].buy_price;
+                        state[loc].own = player;
+
+                        gotoxy(0, 24);
+                        printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+                    }
                 }
-                else
-                {
-                    endl();
-                    printf("구입 완료!");
-                    endl();
-                    Sleep(1000);
-
-                    p_info[player].asset -= basic_land[state[loc].idx].buy_price;
-                    state[loc].own = player;
-
-
-                    gotoxy(0, 24);
-                    printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
-                }
+            }
+            if(command == 3){
+                flag = player;
+                return;
             }
         }
         else if (state[loc].own != player)
@@ -886,12 +912,61 @@ void board_event(int player)
         }
         else
         {
-            endl();
-            printf("당신이 소유한 땅입니다.");
-            endl();
-            printf("무엇을 하시겠습니까?");
-            endl();
-            Sleep(1000);
+            goto CMD;
+            CMD:
+                endl();
+                printf("당신이 소유한 땅입니다.");
+                endl();
+                printf("무엇을 하시겠습니까?");
+                endl();
+                printf("1. 건물 구매");
+                endl();
+                printf("2. 아무것도 하지 않음");
+                endl();
+                printf("3. 기권");
+                endl();
+                printf(" > ");
+                int command;
+                scanf("%d", &command);
+                getchar();
+                endl();
+                if(command == 1){
+                    printf("지으실 건물을 선택하시오.");
+                    endl();
+                    printf("1. 별장 1채");
+                    endl();
+                    printf("2. 별장 2채");
+                    endl();
+                    printf("3. 별장 3채");
+                    endl();
+                    printf("4. 별장 4채");
+                    endl();
+                    printf("5. 아무것도 하지 않음");
+                    endl();
+                    printf("6. 되돌아가기");
+                    endl();
+                    int com;
+                    printf(" > ");
+                    scanf("%d", &com);
+                    getchar();
+                    if(com == 1){
+
+                    }
+                    else if(com == 2){
+
+                    }
+                    else if(com == 3){
+
+                    }
+                    else if(com == 4){
+
+                    }
+                    else if(com == 6){
+                        goto CMD;
+                    }
+                }
+
+                Sleep(1000);
         }
             break;
     }
@@ -916,10 +991,11 @@ void move_printing(int meter, int player_info)
 {
     printf("%d칸 이동",meter);
     color(p_info[player_info].location, 1);
-    endl();
-    endl();
     Sleep(1000);
+    endl();
     moveto(meter, player_info);
+    gotoxy(0, 24);
+    printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
 }
 
 
@@ -954,14 +1030,22 @@ void player_turn(int player)
             printf("더블! ");
             endl();
             move_printing(d.dice1 + d.dice2, player);
+            if(flag){
+                printf("%d님 패배!", flag);
+                return;
+            }
             player_turn(player);
         }
     }
     else
     {
-
         p_info[player].double_count = 0;
         move_printing(d.dice1 + d.dice2, player);
+    }
+
+    if(flag){
+        printf("%d님 패배!", flag);
+        return;
     }
 
     SetConsoleCursorPosition(stdHandle, (COORD){ 0, comment_start });
@@ -983,7 +1067,9 @@ void onep()
         gotoxy(0, 24);
         printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
         player_turn(1);
+        if(flag)break;
         player_turn(2);
+        if(flag)break;
     }
 }
 
