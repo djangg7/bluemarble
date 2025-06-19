@@ -67,7 +67,6 @@ int golden_key_number[105];
 int* screen;
 int next;
 int sahwei = 0;
-/// ⬛ = p1, ⚫ = p2;
 
 typedef BOOL (WINAPI* pSCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 typedef BOOL (WINAPI* pGCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
@@ -225,15 +224,26 @@ void gotoxy(SHORT x, SHORT y)
     SetConsoleCursorPosition(stdHandle, pos);
 }
 
-void color(int loc, int c)
+void color(int player, int c)
 {
+    int loc = p_info[player].location;
     gotoxy(CRD[loc].x, CRD[loc].y);
     switch (loc)
     {
     case 1:
         if(c == 1)
         {
-            printf(WHITE"GO");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"GO", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"GO", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"GO", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -253,7 +263,17 @@ void color(int loc, int c)
     case 36:
         if(c == 1)
         {
-            printf(WHITE"GK");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"GK", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"GK", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"GK", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -269,7 +289,17 @@ void color(int loc, int c)
 
         if(c == 1)
         {
-            printf(WHITE"JA");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"JA", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"JA", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"JA", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -284,7 +314,17 @@ void color(int loc, int c)
     case 39:
         if(c == 1)
         {
-            printf(WHITE"TX");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"TX", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"TX", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"TX", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -299,7 +339,17 @@ void color(int loc, int c)
     case 21:
         if(c == 1)
         {
-            printf(WHITE"GT");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"GT", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"GT", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"GT", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -314,7 +364,17 @@ void color(int loc, int c)
     case 31:
         if(c == 1)
         {
-            printf(WHITE"SP");
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"SP", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"SP", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"SP", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -329,7 +389,17 @@ void color(int loc, int c)
     default:
         if(c == 1)
         {
-            if(state[loc].own == 0) printf(WHITE"%s", basic_land[state[loc].idx].b);
+            if(p_info[1].location == p_info[2].location){
+                if(player == 1){
+                    printf(BLUE"%s", basic_land[state[loc].idx].b);
+                }
+                else{
+                    printf(RED"%s", basic_land[state[loc].idx].b);
+                }
+            }
+            else{
+                printf(WHITE"%s", basic_land[state[loc].idx].b);
+            }
         }
         else if(c == 2)
         {
@@ -347,7 +417,7 @@ void color(int loc, int c)
 }
 void colorbg(int loc, int c)
 {
-    gotoxy(CRD[loc].x, CRD[loc].y);
+    gotoxy(CRD[loc].x - 1, CRD[loc].y);
     switch (loc)
     {
     case 1:
@@ -366,15 +436,48 @@ void colorbg(int loc, int c)
     default:
         if(c == 1)
         {
-            printf(WHITE"%s", basic_land[state[loc].idx].b);
+            printf(WHITE" ");
         }
         else if(c == 2)
         {
-            printf(REDB"%s", basic_land[state[loc].idx].b);
+            printf(REDB" ");
         }
         else
         {
-            printf(BLUEB"%s", basic_land[state[loc].idx].b);
+            printf(BLUEB" ");
+        }
+
+        break;
+    }
+
+    gotoxy(CRD[loc].x + 2, CRD[loc].y);
+    switch (loc)
+    {
+    case 1:
+    case 3:
+    case 8:
+    case 13:
+    case 18:
+    case 23:
+    case 36:
+    case 11:
+    case 39:
+    case 21:
+    case 31:
+        break;
+
+    default:
+        if(c == 1)
+        {
+            printf(WHITE" ");
+        }
+        else if(c == 2)
+        {
+            printf(REDB" ");
+        }
+        else
+        {
+            printf(BLUEB" ");
         }
 
         break;
@@ -691,9 +794,9 @@ void golden_key(int player)
         endl();
         printf("무인도로 곧장 가시되, 출발지를 지날 때도 월급을 받지 못합니다.");
         endl();
-        color(p_info[player].location, 1);
+        color(player, 1);
         p_info[player].location = 11;
-        color(p_info[player].location, player + 1);
+        color(player, player + 1);
         break;
 
     case 5:
@@ -727,9 +830,9 @@ void golden_key(int player)
             p_info[player].asset += 200000;
         }
 
-        color(p_info[player].location, 1);
+        color(player, 1);
         p_info[player].location = 6;
-        color(p_info[player].location, player + 1);
+        color(player, player + 1);
         board_event(player);
         break;
 
@@ -768,9 +871,9 @@ void golden_key(int player)
         endl();
         printf("뒤로 세 칸 옮기시오");
         endl();
-        color(p_info[player].location,1);
+        color(player,1);
         p_info[player].location -= 3;
-        color(p_info[player].location,player+1);
+        color(player,player+1);
         if(p_info[player].location <= 0) p_info[player].location += 40;
         if(p_info[player].location == 1)
         {
@@ -785,9 +888,9 @@ void golden_key(int player)
         endl();
         printf("출발지까지 곧바로 가시오");
         endl();
-        color(p_info[player].location, 1);
+        color(player, 1);
         p_info[player].location = 1;
-        color(p_info[player].location, player + 1);
+        color(player, player + 1);
         printf("출발지 경유 월급 20만원");
         endl();
         p_info[player].asset += 200000;
@@ -836,9 +939,10 @@ void golden_key(int player)
             endl();
             p_info[player].asset -= basic_land[16].landing_price;
         }
-        color(p_info[player].location, 1);
+        color(player, 1);
         p_info[player].location = 2;
-        color(p_info[player].location, player + 1);
+        color(player, player + 1);
+        board_event(player);
         break;
 
     case 15:
@@ -917,6 +1021,7 @@ void golden_key(int player)
 
         break;
     }
+    Sleep(5000);
 }
 
 void board_init()
@@ -988,9 +1093,9 @@ void board_event(int player)
         endl();
         scanf("%d", &target);
         endl();
-        color(p_info[player].location, 1);
+        color(player, 1);
         p_info[player].location = target;
-        color(p_info[player].location, player + 1);
+        color(player, player + 1);
         board_event(player);
         break;
 
@@ -1069,65 +1174,74 @@ void board_event(int player)
             }
             else{
                 printf("우대권이 있습니다. 사용하시겠습니까? (y / n)");
+                endl();
+                printf(" > ");
                 char udae_use;
                 scanf("%c", &udae_use);
+                getchar();
+                endl();
                 if(udae_use == 'y'){
                     p_info[player].udae = 0;
                     return;
                 }
                 printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
+                endl();
                 int toll = basic_land[state[loc].idx].landing_price; // landing_price = landing_price + hotel / house / building price
                 p_info[player].asset -=  toll;
                 p_info[state[loc].own].asset += toll;
 
             }
             Sleep(1000);
-            while(p_info[player].asset > 0){
-                if(p_info[player].asset < 0){
-                    printf("당신에게 상환 받을 돈이 부족합니다.");
-                    endl();
-                    printf("무엇을 하시겠습니까?");
-                    endl();
-                    printf("1. 땅 팔기");
-                    endl();
-                    printf("2. 건물 팔기");
-                    endl();
-                    printf("3. 기권 하기");
-                    endl();
-                    printf(" > ");
-                    getchar();
-                    int minus_com;
-                    scanf("%d", &minus_com);
-                    switch(minus_com){
-                    case 1:
-                        for(int i = 1; i <= BOARD_SIZE; i++){
-                            if(state[i].own == player){
-                                printf("%d번, %d원 : %s", i, basic_land[state[i].idx].buy_price, basic_land[state[i].idx].a);
-                            }
-                            printf("판매하실 번호를 선택하시오.");
+            while(p_info[player].asset < 0){
+                gotoxy(0, 24);
+                printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+                printf("당신에게 상환 받을 돈이 부족합니다.");
+                endl();
+                printf("무엇을 하시겠습니까?");
+                endl();
+                printf("1. 땅 팔기");
+                endl();
+                printf("2. 건물 팔기");
+                endl();
+                printf("3. 기권 하기");
+                endl();
+                printf(" > ");
+                int minus_com;
+                scanf("%d", &minus_com);
+                getchar();
+                endl();
+                switch(minus_com){
+                case 1:
+                    for(int i = 1; i <= BOARD_SIZE; i++){
+                        if(state[i].own == player){
+                            printf("%d번, %d원 : %s", i, basic_land[state[i].idx].buy_price, basic_land[state[i].idx].a);
                             endl();
-                            int sell_num;
-                            printf(" > ");
-                            scanf("%d", &sell_num);
-                            getchar();
-                            if(state[sell_num].own != player){
-                                printf("당신의 상품이 아닙니다.");
-                                break;
-                            }
-                            else{
-                                state[sell_num].own = 0;
-                                p_info[player].asset += basic_land[state[i].idx].buy_price;
-                                break;
-                            }
                         }
-                    case 2:
-                        /* 숙제 */
-
-                    case 3:
-                        flag = player;
-                        return;
-
                     }
+                    printf("판매하실 번호를 선택하시오.");
+                    endl();
+                    int sell_num;
+                    printf(" > ");
+                    scanf("%d", &sell_num);
+                    getchar();
+                    endl();
+                    if(state[sell_num].own != player){
+                        printf("당신의 상품이 아닙니다.");
+                        endl();
+                        break;
+                    }
+                    else{
+                        state[sell_num].own = 0;
+                        p_info[player].asset += basic_land[state[sell_num].idx].buy_price;
+                        break;
+                    }
+                case 2:
+                    /* 숙제 */
+
+                case 3:
+                    flag = player;
+                    return;
+
                 }
             }
         }
@@ -1210,16 +1324,17 @@ void moveto(int meter, int player_info)
         p_info[player_info].asset += 200000;
         p_info[player_info].location -= 40;
     }
-    color(p_info[player_info].location, player_info + 1);
+    color(player_info, player_info + 1);
     board_event(player_info);
 }
 
 void move_printing(int meter, int player_info)
 {
     printf("%d칸 이동",meter);
-    color(p_info[player_info].location, 1);
+    color(player_info, 1);
     Sleep(1000);
     endl();
+
     moveto(meter, player_info);
     gotoxy(0, 24);
     printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
@@ -1250,9 +1365,9 @@ void player_turn(int player)
         {
             printf("더블 3번! 무인도 이동");
             endl();
-            color(p_info[player].location, 1);
+            color(player, 1);
             p_info[player].location = 11;
-            color(p_info[player].location, player+1);
+            color(player, player+1);
         }
         else
         {
