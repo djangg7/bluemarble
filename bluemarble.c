@@ -25,6 +25,18 @@ int ide = 0;
 #endif
 
 
+/*
+    남은 숙제
+    1. 파산시 집 팔기
+    2. 건물 짓기
+    3. 황금 열쇠
+    4. 무인도
+    5. 무인도 탈출 사용
+    6. 입력 버퍼 초기화 (중요도 낮음)
+    7. 게임 설명
+    8. Landing_price += building / hotel / house price
+*/
+
 /// COLORS DEFINING
 #define RESET   "\033[0m"
 #define BLACK   "\033[0m\033[30m"      /* Black */
@@ -958,6 +970,7 @@ void board_event(int player)
         Sleep(2000);
         endl();
         p_info[player].asset -= 100000;
+        sahwei += 100000;
         break;
     case 21:
         printf("사회복지기금 접수처입니다. 현재까지 모인 기금을 받아갑니다.");
@@ -1048,11 +1061,75 @@ void board_event(int player)
         else if (state[loc].own != player)
         {
             endl();
-            printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
-            int toll = basic_land[state[loc].idx].landing_price; // 통행료
-            p_info[player].asset -=  toll;
-            p_info[state[loc].own].asset += toll;
+            if(!p_info[player].udae){
+                printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
+                int toll = basic_land[state[loc].idx].landing_price; // 통행료
+                p_info[player].asset -=  toll;
+                p_info[state[loc].own].asset += toll;
+            }
+            else{
+                printf("우대권이 있습니다. 사용하시겠습니까? (y / n)");
+                char udae_use;
+                scanf("%c", &udae_use);
+                if(udae_use == 'y'){
+                    p_info[player].udae = 0;
+                    return;
+                }
+                printf("상대방이 소유한 땅입니다. 통행료를 지불합니다.");
+                int toll = basic_land[state[loc].idx].landing_price; // landing_price = landing_price + hotel / house / building price
+                p_info[player].asset -=  toll;
+                p_info[state[loc].own].asset += toll;
+
+            }
             Sleep(1000);
+            while(p_info[player].asset > 0){
+                if(p_info[player].asset < 0){
+                    printf("당신에게 상환 받을 돈이 부족합니다.");
+                    endl();
+                    printf("무엇을 하시겠습니까?");
+                    endl();
+                    printf("1. 땅 팔기");
+                    endl();
+                    printf("2. 건물 팔기");
+                    endl();
+                    printf("3. 기권 하기");
+                    endl();
+                    printf(" > ");
+                    getchar();
+                    int minus_com;
+                    scanf("%d", &minus_com);
+                    switch(minus_com){
+                    case 1:
+                        for(int i = 1; i <= BOARD_SIZE; i++){
+                            if(state[i].own == player){
+                                printf("%d번, %d원 : %s", i, basic_land[state[i].idx].buy_price, basic_land[state[i].idx].a);
+                            }
+                            printf("판매하실 번호를 선택하시오.");
+                            endl();
+                            int sell_num;
+                            printf(" > ");
+                            scanf("%d", &sell_num);
+                            getchar();
+                            if(state[sell_num].own != player){
+                                printf("당신의 상품이 아닙니다.");
+                                break;
+                            }
+                            else{
+                                state[sell_num].own = 0;
+                                p_info[player].asset += basic_land[state[i].idx].buy_price;
+                                break;
+                            }
+                        }
+                    case 2:
+                        /* 숙제 */
+
+                    case 3:
+                        flag = player;
+                        return;
+
+                    }
+                }
+            }
         }
         else
         {
