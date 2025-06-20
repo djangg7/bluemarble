@@ -27,14 +27,14 @@ int ide = 0;
 
 /*
     남은 숙제
-    1. 파산시 집 팔기
-    2. 건물 짓기
-    3. 황금 열쇠
-    4. 무인도
-    5. 무인도 탈출 사용
+    2. 건물 짓기 (중요도 높음)
+    4. 무인도 (중요도 높음) 완료
+    5. 무인도 탈출 사용 (중요도 높음) 완료
+    8. Landing_price += building / hotel / house price (2 선행 되어야 함)
+    1. 파산시 집 팔기 (중요도 중간 2 선행 되어야 함)
+    3. 황금 열쇠 (중요도 중간 땜빵 가능)
     6. 입력 버퍼 초기화 (중요도 낮음)
-    7. 게임 설명
-    8. Landing_price += building / hotel / house price
+    7. 게임 설명 (중요도 낮음, 재량임)
 */
 
 /// COLORS DEFINING
@@ -155,7 +155,7 @@ struct box_coord CRD[] =
 
 struct player
 {
-    int double_count, asset, location, muindo, udae, hotel_cnt, building_cnt, house_cnt;
+    int double_count, asset, location, muindo_exit, udae, hotel_cnt, building_cnt, house_cnt, m;
 };
 struct land_type state[40];
 struct player p_info[5];
@@ -784,7 +784,7 @@ void golden_key(int player)
         printf("c) 특수무전기 가격은 20만원입니다.");
         endl();
 
-        p_info[player].muindo = 1;
+        p_info[player].muindo_exit = 1;
         break;
 
     case 4:
@@ -812,6 +812,9 @@ void golden_key(int player)
         printf(" > ");
         scanf("%d", &money_adding);
         p_info[player].asset += money_adding;
+
+        gotoxy(0, 24);
+        printf("p1 잔액 : %7d \t p2 잔액 : %7d", p_info[1].asset, p_info[2].asset);
         break;
 
     case 6:
@@ -1021,7 +1024,7 @@ void golden_key(int player)
 
         break;
     }
-    Sleep(5000);
+    Sleep(3000);
 }
 
 void board_init()
@@ -1051,6 +1054,7 @@ void board_event(int player)
     {
     case 1:
         printf("시작지에 도착했습니다!");
+        Sleep(2000);
         break;
     case 3:
     case 8:
@@ -1066,6 +1070,7 @@ void board_event(int player)
 
     case 11:
         printf("무인도입니다! 3턴 동안 움직일 수 없습니다.");
+        p_info[player].m = 1;
         Sleep(2000);
         endl();
         break;
@@ -1194,7 +1199,7 @@ void board_event(int player)
             Sleep(1000);
             while(p_info[player].asset < 0){
                 gotoxy(0, 24);
-                printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+                printf("p1 잔액 : %7d \t p2 잔액 : %7d", p_info[1].asset, p_info[2].asset);
                 printf("당신에게 상환 받을 돈이 부족합니다.");
                 endl();
                 printf("무엇을 하시겠습니까?");
@@ -1337,7 +1342,7 @@ void move_printing(int meter, int player_info)
 
     moveto(meter, player_info);
     gotoxy(0, 24);
-    printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+    printf("p1 잔액 : %7d \t p2 잔액 : %7d", p_info[1].asset, p_info[2].asset);
 }
 
 
@@ -1358,6 +1363,35 @@ void player_turn(int player)
     printf("첫 번째 주사위: %d, 두 번째 주사위: %d",d.dice1, d.dice2);
     endl();
 
+    if(p_info[player].m){
+        Sleep(1000);
+        p_info[player].m++;
+        if(d.dice1 == d.dice2){
+            printf("탈출!");
+            endl();
+            p_info[player].m = 0;
+            player_turn(player);
+        }
+        else if(p_info[player].muindo_exit){
+            printf("무인도 탈출권이 있습니다. 사용하시겠습니까? (y / n)");
+            char m_yn;
+            endl();
+            scanf("%c", &m_yn);
+            if(m_yn == 'y'){
+                printf("무인도 탈출 사용! 주사위를 한 번 더 굴립니다.");
+                endl();
+                p_info[player].muindo_exit -=1;
+                Sleep(1000);
+                player_turn(player);
+            }
+            else{
+                return;
+            }
+        }
+        else{
+            return;
+        }
+    }
     if(d.dice1 == d.dice2)
     {
         p_info[player].double_count++;
@@ -1404,7 +1438,8 @@ void player_turn(int player)
             colorbg(i, 3);
         }
     }
-    SetConsoleCursorPosition(stdHandle, (COORD){0, comment_start});
+
+    gotoxy(0, comment_start);
     return;
 }
 
@@ -1420,7 +1455,7 @@ void onep()
     {
         printf(WHITE);
         gotoxy(0, 24);
-        printf("p1 잔액 : %d \t p2 잔액 : %d", p_info[1].asset, p_info[2].asset);
+        printf("p1 잔액 : %7d \t p2 잔액 : %7d", p_info[1].asset, p_info[2].asset);
         player_turn(1);
         if(flag)break;
         player_turn(2);
@@ -1438,18 +1473,12 @@ void game()
     printf("\nTo play 1p press 1\nTo play 2p press 2\nTo exit press 3\n> ");
     int playstyle;
     scanf("%d", &playstyle);
+    getchar();
     if(playstyle == 1)
     {
         board_init();
-        SetConsoleCursorPosition(stdHandle, (COORD)
-        {
-            0, 0
-        });
-        FillConsoleOutputCharacter(stdHandle, ' ', 50 * 50, (COORD)
-        {
-            0, 0
-        }, &dw);
-        getchar();
+        gotoxy(0, 0);
+        FillConsoleOutputCharacter(stdHandle, ' ', 50 * 50, (COORD){ 0, 0}, &dw);
         onep();
     }
     else if(playstyle == 2)
