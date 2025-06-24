@@ -24,19 +24,6 @@ int ide = 2;
 int ide = 0;
 #endif
 
-
-/*
-    남은 숙제
-    2. 건물 짓기 (중요도 높음)
-    4. 무인도 (중요도 높음) 완료
-    5. 무인도 탈출 사용 (중요도 높음) 완료
-    8. Landing_price += building / hotel / house price (2 선행 되어야 함)
-    1. 파산시 집 팔기 (중요도 중간 2 선행 되어야 함)
-    3. 황금 열쇠 (중요도 중간 땜빵 가능)
-    6. 입력 버퍼 초기화 (중요도 낮음)
-    7. 게임 설명 (중요도 낮음, 재량임)
-*/
-
 /// COLORS DEFINING
 #define RESET   "\033[0m"
 #define BLACK   "\033[0m\033[30m"      /* Black */
@@ -600,93 +587,6 @@ void golden_key_init()
     }
 }
 
-/*
- < 황금 열쇠 >
-    1   병원비지불   병원에서 건강진단을 받았습니다. 병원비 5만원을 은행에 내시오.
-    2   복권당첨   축하합니다. 복권에 당첨되었습니다. 당첨금 20만원.
-    3   무인도탈출
-    (특수무전기)   a) 무인도에 갖혀 있을 때에 사용할 수 있음
-    b) 1회 사용후 반납하며, 타인에게 팔 수 있음.
-    c) 특수무전기 가격은 20만원입니다.
-    4   무인도로
-    가시오   폭풍을 만났습니다.
-    무인도로 곧장 가시되, 출발지를 지날 때도 월급을 받지 못합니다.
-    5   파티초대권   대중 앞에서 장기자랑을 하십시오
-    (상대방 여러분들이 채점하신 후, 적당한 상금을 은행에서 지불해 드립니다.)
-    6   관광여행
-    .제주도로 가십시오
-    .제주도에 통행료 지불
-    .출발지를 거쳐갈 경우, 월급을 받으시오
-    7   과속운전벌금   과속운전을 하였으므로, 벌금 5만원을 내시오
-    8   해외유학   학교 등록금을 내시오. 등록금 10만원
-    9   연금혜택   은행에서 노후 연금 5만원을 받으시오
-    10   이사가시오   뒤로 세 칸 옮기시오
-    11   고속도로   출발지까지 곧바로 가시오
-    12   우승   자동차 경주에서 참피온이 되었습니다. 상금 10만원
-    13   우대권   이 우대권을 가지고 있게 될 경우,
-    상대방의 장소를 통행료 없이 머무를 수 있습니다.
-    a) 1회 사용후 열쇠 함에 반납하시오
-    b) 중요한 순간에만 쓰십시오.
-    14   항공여행   콩코드 여객기를 타시고, 타이페이로 가시오
-    a) 콩코드에 객실료를 지불하시오
-    b) 출발지를 거쳐가실 경우에는 월급을 타시오
-    15   건물수리비
-    지불   정기적으로 건물을 수리하여야 합니다.
-    (각 건물별로 다음과 같이 은행에서 지불하시오)
-    호텔(HOTEL) .......... 10만원
-    빌딩(BUILDING) ....... 6만원
-    별장(VILLA) ......... 3만원
-    16   방범비   방범비를 각 건물별로 다음과 같이 은행에 지불하시오
-    호텔(HOTEL) .......... 5만원
-    빌딩(BUILDING) ....... 3만원
-    별장(VILLA) ......... 1만원
-    17   우주여행
-    초청장   우주항공국에서 우주여행 초청장이 왔습니다.
-    a) 무료이므로 콜럼비아호에게 탑승료를 지불하지 않도록 되며,
-        우주정류장으로 가십시요.
-    b) 출발지를 거치실 경우에는 월급을 받으시오
-    18   관광여행   부산으로 가십시오
-    . 부산에 통행료 지불
-    . 출발지를 거쳐서 갈 경우, 월급을 받으시오
-    19   생일을
-    축하합니다.   "HAPPY BIRTHDAY TO YOU"
-    (해피 버스 데이 투 유!)
-    모두에게 생일 축하를 받으시오(축하금 천원)
-    20   장학금 혜택   은행에서 장학금 10만원을 받으시오
-    21   정기종합
-    소득세   종합소득세를 각 건물별로 아래와 같이 지불하시오
-    a)호텔(HOTEL) .......... 15만원
-    b)빌딩(BUILDING) ....... 10만원
-    c)별장(VILLA) ......... 3만원
-    22   노벨평화상
-    수상   당신은 세계 평화를 위하여 공헌하였으므로,
-    은행으로부터 상금 30만원을 배당 받습니다.
-    23   관광여행   88년도 올림픽개최지인 서울로 가십시오
-    서울올림픽에 통행료 지불(200만원)
-    24   반액대매출   당신의 재산 중에서 제일 비싼 곳을 반액으로 은행에 파십시오
-    (건물이 지어진 경우에는 함께 처분해야 합니다)
-    25   우주여행
-    초청장   우주항공국에서 우주여행초청장이 왔습니다.
-    A) 무료이므로 콜럼비아호에게 탑승료를 지불하지 않도록 되며,
-        우주정류장으로 가십시오
-    B) 출발지를 거치실 경우에는 월급을 받으시오
-    26   우대권   이 우대권을 가지고 있게 될 경우,
-    상대방의 장소를 통행료 없이 머무를 수 있습니다.
-    a) 1회 사용후 열쇠 함에 반납하시오
-    b) 중요한 순간에만 쓰십시오.
-    27   세계일주
-    초대권   축하합니다. 현재위치에서부터 한바퀴 돌아오십시오.
-    (다른 곳으로는 갈 수 없으며, 현위치로 돌아올 수 있음)
-    A) 출발지를 거쳐가면서 월급을 받으시오
-    B) 복지기금을 거쳐가면서 모아놓은 기금을 받으시오.
-    28   이사가시오   뒤로 두 칸 옮기시오
-    29   사회복지기금
-    배당   사회복지기금 접수처로 가시오
-    출발지를 거치실 경우에는 월급을 받으시오
-    30   반액대매출   당신의 재산 중에서 제일 비싼 곳을 반액으로 은행에 파십시오
-    (건물이 지어진 경우에는 함께 처분해야 합니다)
-
-*/
 
 int non_default_land[] = {1, 3, 8, 11, 13, 18, 21, 23, 31, 36, 39};
 
@@ -749,7 +649,7 @@ void golden_key(int player)
 {
     int top = golden_key_number[next];
     next++;
-    next %= 30;
+    next %= 15;
     switch(top)
     {
     case 1:
@@ -884,6 +784,7 @@ void golden_key(int player)
             endl();
             p_info[player].asset += 200000;
         }
+        board_event(player);
         break;
 
     case 11:
@@ -948,82 +849,7 @@ void golden_key(int player)
         board_event(player);
         break;
 
-    case 15:
-        printf("건물수리비");
-        endl();
-        printf("지불\t정기적으로 건물을 수리하여야 합니다.");
-        endl();
-        printf("(각 건물별로 다음과 같이 은행에서 지불하시오)");
-        endl();
-        printf("호텔(HOTEL) .......... 10만원");
-        endl();
-        printf("빌딩(BUILDING) ....... 6만원");
-        endl();
-        printf("별장(VILLA) ......... 3만원");
-        endl();
-        break;
 
-
-    case 16:
-
-        break;
-
-    case 17:
-
-        break;
-
-    case 18:
-
-        break;
-
-    case 19:
-
-        break;
-
-    case 20:
-
-        break;
-
-    case 21:
-
-        break;
-
-    case 22:
-
-        break;
-
-    case 23:
-
-        break;
-
-    case 24:
-
-        break;
-
-    case 25:
-
-        break;
-
-    case 26:
-
-        break;
-
-    case 27:
-
-        break;
-
-    case 28:
-
-        break;
-
-    case 29:
-
-        break;
-
-    case 30:
-
-        break;
-    }
     Sleep(3000);
 }
 
@@ -1274,17 +1100,13 @@ CMD:
             {
                 printf("지으실 건물을 선택하시오.");
                 endl();
-                printf("1. 별장 1채");
+                printf("1. 빌딩");
                 endl();
-                printf("2. 별장 2채");
+                printf("2. 호텔");
                 endl();
-                printf("3. 별장 3채");
+                printf("3. 아무것도 하지 않음");
                 endl();
-                printf("4. 별장 4채");
-                endl();
-                printf("5. 아무것도 하지 않음");
-                endl();
-                printf("6. 되돌아가기");
+                printf("4. 되돌아가기");
                 endl();
                 int com;
                 printf(" > ");
@@ -1292,21 +1114,13 @@ CMD:
                 getchar();
                 if(com == 1)
                 {
-
+                    printf("미구현입니다.");
                 }
                 else if(com == 2)
                 {
-
-                }
-                else if(com == 3)
-                {
-
+                    printf("미구현입니다.");
                 }
                 else if(com == 4)
-                {
-
-                }
-                else if(com == 6)
                 {
                     goto CMD;
                 }
@@ -1439,7 +1253,10 @@ void player_turn(int player)
         }
     }
 
-    gotoxy(0, comment_start);
+    SetConsoleCursorPosition(stdHandle, (COORD){ 0, comment_start });
+    FillConsoleOutputCharacter(stdHandle, ' ', 100 * 100, (COORD){ 0, comment_start }, &dw);
+    SetConsoleCursorPosition(stdHandle, (COORD){ 0, comment_start });
+
     return;
 }
 
@@ -1525,9 +1342,7 @@ int main()
     srand(time(NULL));
 
     SetConsoleOutputCP(CP_UTF8);
-
     CONSOLE_CURSOR_INFO cursorInfo = { 0, };
-
     cursorInfo.dwSize = 1;
     cursorInfo.bVisible = 0;
     SetConsoleCursorInfo(stdHandle, &cursorInfo);
