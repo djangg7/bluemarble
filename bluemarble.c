@@ -3,7 +3,11 @@
 #include <time.h>
 #include <windows.h>
 #include <stdbool.h>
+/*
 
+    852번째 줄 '}' 추가
+
+*/
 #define stdHandle GetStdHandle(STD_OUTPUT_HANDLE)
 #ifndef WINVER
 #define WINVER 0x0501
@@ -849,7 +853,7 @@ void golden_key(int player)
         board_event(player);
         break;
 
-
+    }
     Sleep(3000);
 }
 
