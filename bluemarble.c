@@ -3,11 +3,14 @@
 #include <time.h>
 #include <windows.h>
 #include <stdbool.h>
-/*
 
+/*
+    축소 2번
     852번째 줄 '}' 추가
+    cmd font 크기
 
 */
+
 #define stdHandle GetStdHandle(STD_OUTPUT_HANDLE)
 #ifndef WINVER
 #define WINVER 0x0501
@@ -62,6 +65,7 @@ int sahwei = 0;
 typedef BOOL (WINAPI* pSCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 typedef BOOL (WINAPI* pGCFEX)(HANDLE, BOOL, PCONSOLE_FONT_INFOEX);
 short cur = 0;
+
 void board_event(int player);
 
 struct land_info
@@ -148,7 +152,9 @@ struct player
 {
     int double_count, asset, location, muindo_exit, udae, hotel_cnt, building_cnt, house_cnt, m;
 };
+
 struct land_type state[40];
+
 struct player p_info[5];
 
 void ClearConsoleRect(HANDLE hConsole, SHORT left, SHORT top, SHORT right, SHORT bottom)
@@ -406,6 +412,7 @@ void color(int player, int c)
     printf(WHITE);
     endl();
 }
+
 void colorbg(int loc, int c)
 {
     gotoxy(CRD[loc].x - 1, CRD[loc].y);
@@ -590,7 +597,6 @@ void golden_key_init()
         golden_key_number[i] = random_num;
     }
 }
-
 
 int non_default_land[] = {1, 3, 8, 11, 13, 18, 21, 23, 31, 36, 39};
 
@@ -1163,7 +1169,6 @@ void move_printing(int meter, int player_info)
     printf("p1 잔액 : %7d \t p2 잔액 : %7d", p_info[1].asset, p_info[2].asset);
 }
 
-
 void player_turn(int player)
 {
     cur = 0;
@@ -1264,7 +1269,6 @@ void player_turn(int player)
     return;
 }
 
-
 void onep()
 {
     pan();
@@ -1286,7 +1290,7 @@ void onep()
 
 void twop()
 {
-
+    /* 소켓 프로그래밍 */
 }
 
 void game()
@@ -1346,6 +1350,7 @@ int main()
     srand(time(NULL));
 
     SetConsoleOutputCP(CP_UTF8);
+
     CONSOLE_CURSOR_INFO cursorInfo = { 0, };
     cursorInfo.dwSize = 1;
     cursorInfo.bVisible = 0;
@@ -1355,6 +1360,7 @@ int main()
     HWND owner = GetWindow(hwnd, GW_OWNER);
 
     CONSOLE_SCREEN_BUFFER_INFO csbi;
+
     if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi))
     {
         int width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
