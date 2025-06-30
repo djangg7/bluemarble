@@ -5,10 +5,8 @@
 #include <stdbool.h>
 
 /*
-    축소 2번
     852번째 줄 '}' 추가
-    cmd font 크기
-
+    https://github.com/djangg7/bluemarble
 */
 
 #define stdHandle GetStdHandle(STD_OUTPUT_HANDLE)
@@ -581,9 +579,9 @@ Exit:
 
 void golden_key_init()
 {
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < 15; i++)
     {
-        int random_num = (rand() % 30) + 1;
+        int random_num = (rand() % 15) + 1;
         bool check = false;
         for (int j = 0; j < i; j++)
         {
@@ -1194,6 +1192,7 @@ void player_turn(int player)
             endl();
             p_info[player].m = 0;
             player_turn(player);
+            return;
         }
         else if(p_info[player].muindo_exit){
             printf("무인도 탈출권이 있습니다. 사용하시겠습니까? (y / n)");
