@@ -1349,8 +1349,6 @@ int main()
 {
     srand(time(NULL));
 
-    SetConsoleOutputCP(CP_UTF8);
-
     CONSOLE_CURSOR_INFO cursorInfo = { 0, };
     cursorInfo.dwSize = 1;
     cursorInfo.bVisible = 0;
